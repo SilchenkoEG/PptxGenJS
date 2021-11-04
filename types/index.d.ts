@@ -1,4 +1,4 @@
-// Type definitions for pptxgenjs 3.7.0
+// Type definitions for pptxgenjs 3.8.0
 // Project: https://gitbrent.github.io/PptxGenJS/
 // Definitions by: Brent Ely <https://github.com/gitbrent/>
 //                 Michael Beaumont <https://github.com/michaelbeaumont>
@@ -1392,8 +1392,8 @@ declare namespace PptxGenJS {
 		points?: Array<
 			| { x: Coord; y: Coord; moveTo?: boolean }
 			| { x: Coord; y: Coord; curve: { type: 'arc'; hR: Coord; wR: Coord; stAng: number; swAng: number } }
-			| { x: Coord; y: Coord; curve: { type: 'quadratic'; x1: Coord; y1: Coord } }
 			| { x: Coord; y: Coord; curve: { type: 'cubic'; x1: Coord; y1: Coord; x2: Coord; y2: Coord } }
+			| { x: Coord; y: Coord; curve: { type: 'quadratic'; x1: Coord; y1: Coord } }
 			| { close: true }
 		>
 		/**
@@ -1512,12 +1512,6 @@ declare namespace PptxGenJS {
 		 * - this margin will be across all slides created by auto-paging
 		 */
 		slideMargin?: Margin
-		/**
-		 * DEV TOOL: Verbose Mode (to console)
-		 * - tell the library to provide an almost ridiculous amount of detail during auto-paging calculations
-		 * @default false // obviously
-		 */
-		verbose?: boolean // Undocumented; shows verbose output
 
 		/**
 		 * @deprecated v3.3.0 - use `autoPageRepeatHeader`
@@ -1564,7 +1558,7 @@ declare namespace PptxGenJS {
 		 */
 		fill?: ShapeFillProps
 		/**
-		 * Cell margin
+		 * Cell margin (inches)
 		 * @default 0
 		 */
 		margin?: Margin
@@ -1627,7 +1621,7 @@ declare namespace PptxGenJS {
 		 */
 		border?: BorderProps | [BorderProps, BorderProps, BorderProps, BorderProps]
 		/**
-		 * Width of table columns
+		 * Width of table columns (inches)
 		 * - single value is applied to every column equally based upon `w`
 		 * - array of values in applied to each column in order
 		 * @default columns of equal width based upon `w`
@@ -1641,17 +1635,23 @@ declare namespace PptxGenJS {
 		 */
 		fill?: ShapeFillProps
 		/**
-		 * Cell margin
+		 * Cell margin (inches)
 		 * - affects all table cells, is superceded by cell options
 		 */
 		margin?: Margin
 		/**
-		 * Height of table rows
+		 * Height of table rows (inches)
 		 * - single value is applied to every row equally based upon `h`
 		 * - array of values in applied to each row in order
 		 * @default rows of equal height based upon `h`
 		 */
 		rowH?: number | number[]
+		/**
+		 * DEV TOOL: Verbose Mode (to console)
+		 * - tell the library to provide an almost ridiculous amount of detail during auto-paging calculations
+		 * @default false // obviously
+		 */
+		verbose?: boolean // Undocumented; shows verbose output
 
 		/**
 		 * @deprecated v3.3.0 - use `autoPageSlideStartY`

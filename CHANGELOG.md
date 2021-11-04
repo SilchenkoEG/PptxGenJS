@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Notes]
 
+## [3.9.0] - 2021-11-??
+
+### Fixed
+
+- SlideNumber vertical alignment (`valign`) not working [\#1000](https://github.com/gitbrent/PptxGenJS/pull/1000) ([kramsram](https://github.com/kramsram))
+
+## [3.8.0] - 2021-09-28
+
+### Added
+
+- Table auto-paging completely re-written from scratch; finally handles complex-text (text runs) [\#993](https://github.com/gitbrent/PptxGenJS/pull/993) ([gitbrent](https://github.com/gitbrent))
+
+### Changed
+
+- Browser Demo: refreshed UI and upgraded to bootstrap-5 [\#997](https://github.com/gitbrent/PptxGenJS/pull/997) ([gitbrent](https://github.com/gitbrent))
+- Documentation site (gh-pages) rebuilt from scrath [\#999](https://github.com/gitbrent/PptxGenJS/pull/999) ([gitbrent](https://github.com/gitbrent))
+
 ## [3.7.1] - 2021-07-21
 
 ### Fixed

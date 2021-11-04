@@ -2,12 +2,11 @@
  * PptxGenJS: XML Generation
  */
 
-import { IImage } from 'image-size/dist/types/interface'
 import {
 	BULLET_TYPES,
 	CRLF,
 	DEF_BULLET_MARGIN,
-	DEF_CELL_MARGIN_PT,
+	DEF_CELL_MARGIN_IN,
 	DEF_PRES_LAYOUT_NAME,
 	DEF_TEXT_GLOW,
 	DEF_TEXT_SHADOW,
@@ -317,11 +316,22 @@ function slideObjectToXml(slide: PresSlide | SlideLayout): string {
 						fillColor =
 							fillColor || (cellOpts.fill && cellOpts.fill.color) ? cellOpts.fill.color : cellOpts.fill && typeof cellOpts.fill === 'string' ? cellOpts.fill : ''
 						let cellFill = fillColor ? `<a:solidFill>${createColorElement(fillColor)}</a:solidFill>` : ''
-						let cellMargin = cellOpts.margin === 0 || cellOpts.margin ? cellOpts.margin : DEF_CELL_MARGIN_PT
+						let cellMargin = cellOpts.margin === 0 || cellOpts.margin ? cellOpts.margin : DEF_CELL_MARGIN_IN
 						if (!Array.isArray(cellMargin) && typeof cellMargin === 'number') cellMargin = [cellMargin, cellMargin, cellMargin, cellMargin]
-						let cellMarginXml = ` marL="${valToPts(cellMargin[3])}" marR="${valToPts(cellMargin[1])}" marT="${valToPts(cellMargin[0])}" marB="${valToPts(
-							cellMargin[2]
-						)}"`
+						/** FUTURE: DEPRECATED:
+						 * - Backwards-Compat: Oops! Discovered we were still using points for cell margin before v3.8.0 (UGH!)
+						 * - We cant introduce a breaking change before v4.0, so...
+						 */
+						let cellMarginXml = ''
+						if (cellMargin[0] >= 1) {
+							cellMarginXml = ` marL="${valToPts(cellMargin[3])}" marR="${valToPts(cellMargin[1])}" marT="${valToPts(cellMargin[0])}" marB="${valToPts(
+								cellMargin[2]
+							)}"`
+						} else {
+							cellMarginXml = ` marL="${inch2Emu(cellMargin[3])}" marR="${inch2Emu(cellMargin[1])}" marT="${inch2Emu(cellMargin[0])}" marB="${inch2Emu(
+								cellMargin[2]
+							)}"`
+						}
 
 						// FUTURE: Cell NOWRAP property (textwrap: add to a:tcPr (horzOverflow="overflow" or whatever options exist)
 
@@ -732,6 +742,9 @@ function slideObjectToXml(slide: PresSlide | SlideLayout): string {
 			strSlideXml += ` tIns="${valToPts(slide._slideNumberProps.margin || 0)}"`
 			strSlideXml += ` rIns="${valToPts(slide._slideNumberProps.margin || 0)}"`
 			strSlideXml += ` bIns="${valToPts(slide._slideNumberProps.margin || 0)}"`
+		}
+		if (slide._slideNumberProps.valign) {
+			strSlideXml += ` anchor="${slide._slideNumberProps.valign.replace('top', 't').replace('middle', 'ctr').replace('bottom', 'b')}"`
 		}
 		strSlideXml += '/>'
 		strSlideXml += '  <a:lstStyle><a:lvl1pPr>'
@@ -1312,7 +1325,7 @@ export function genXmlTextBody(slideObj: ISlideObject | TableCell): string {
 			textObj.options.paraSpaceAfter = textObj.options.paraSpaceAfter || opts.paraSpaceAfter
 			paragraphPropXml = genXmlParagraphProperties(textObj, false)
 
-			strSlideXml += paragraphPropXml
+			strSlideXml += paragraphPropXml.replace('<a:pPr></a:pPr>', '') // IMPORTANT: Empty "pPr" blocks will generate needs-repair/corrupt msg
 			// C: Inherit any main options (color, fontSize, etc.)
 			// NOTE: We only pass the text.options to genXmlTextRun (not the Slide.options),
 			// so the run building function cant just fallback to Slide.color, therefore, we need to do that here before passing options below.

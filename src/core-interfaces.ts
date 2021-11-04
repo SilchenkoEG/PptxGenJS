@@ -693,12 +693,6 @@ export interface TableToSlidesProps extends TableProps {
 	 * - this margin will be across all slides created by auto-paging
 	 */
 	slideMargin?: Margin
-	/**
-	 * DEV TOOL: Verbose Mode (to console)
-	 * - tell the library to provide an almost ridiculous amount of detail during auto-paging calculations
-	 * @default false // obviously
-	 */
-	verbose?: boolean // Undocumented; shows verbose output
 
 	/**
 	 * @deprecated v3.3.0 - use `autoPageRepeatHeader`
@@ -745,7 +739,7 @@ export interface TableCellProps extends TextBaseProps {
 	 */
 	fill?: ShapeFillProps
 	/**
-	 * Cell margin
+	 * Cell margin (inches)
 	 * @default 0
 	 */
 	margin?: Margin
@@ -808,7 +802,7 @@ export interface TableProps extends PositionProps, TextBaseProps {
 	 */
 	border?: BorderProps | [BorderProps, BorderProps, BorderProps, BorderProps]
 	/**
-	 * Width of table columns
+	 * Width of table columns (inches)
 	 * - single value is applied to every column equally based upon `w`
 	 * - array of values in applied to each column in order
 	 * @default columns of equal width based upon `w`
@@ -822,17 +816,23 @@ export interface TableProps extends PositionProps, TextBaseProps {
 	 */
 	fill?: ShapeFillProps
 	/**
-	 * Cell margin
+	 * Cell margin (inches)
 	 * - affects all table cells, is superceded by cell options
 	 */
 	margin?: Margin
 	/**
-	 * Height of table rows
+	 * Height of table rows (inches)
 	 * - single value is applied to every row equally based upon `h`
 	 * - array of values in applied to each row in order
 	 * @default rows of equal height based upon `h`
 	 */
 	rowH?: number | number[]
+	/**
+	 * DEV TOOL: Verbose Mode (to console)
+	 * - tell the library to provide an almost ridiculous amount of detail during auto-paging calculations
+	 * @default false // obviously
+	 */
+	verbose?: boolean // Undocumented; shows verbose output
 
 	/**
 	 * @deprecated v3.3.0 - use `autoPageSlideStartY`
@@ -841,14 +841,18 @@ export interface TableProps extends PositionProps, TextBaseProps {
 }
 export interface TableCell {
 	_type: SLIDE_OBJECT_TYPES.tablecell
-	_lines?: string[]
+	/** lines in this cell (autoPage) */
+	_lines?: TableCell[][]
+	/** `text` prop but guaranteed to hold "TableCell[]" */
+	_tableCells?: TableCell[]
+	/** height in EMU */
 	_lineHeight?: number
 	_hmerge?: boolean
 	_vmerge?: boolean
 	_rowContinue?: number
 	_optImp?: any
 
-	text?: string | TableCell[]
+	text?: string | TableCell[] // TODO: FUTURE: 20210815: ONly allow `TableCell[]` dealing with string|TableCell[] *SUCKS*
 	options?: TableCellProps
 }
 export interface TableRowSlide {
@@ -1434,6 +1438,10 @@ export interface PresLayout {
 	height: number
 }
 export interface SlideNumberProps extends PositionProps, TextBaseProps {
+	/**
+	 * margin (points)
+	 * TODO: convert to inches in 4.0 (valid values are 0-22)
+	 */
 	margin?: Margin
 }
 export interface SlideMasterProps {
